@@ -24,18 +24,18 @@ with DAG(
 
     t_bash = BashOperator(
         task_id="bash_output",
-        bash_command='echo "today is: $(date)"'
+        bash_command='echo "today is: $(date)" - {{ dag_run.conf["EXP_ID"] }}'
     )
 
     t_docker = DockerOperator(
         task_id='docker_command',
-        image='rocker/tidyverse:latest',
-        # image='sktrinh12/bdb-omiqpipeline:base_v3',
+        image='bdb/omiq:latest',
         api_version='auto',
         auto_remove=True,
         force_pull=False,
-        volumes=['/home/spencer/Documents/Rscripts:/scripts'],
-        command='Rscript /scripts/test.R',
+	volumes = ['/datadump:/datadump:z', '/home/ca10322096/scripts:/scripts:z'],
+       # command='Rscript -e "print(list.files(file.path(\'/mnt/data/20211506TEST\')))"',
+	command='Rscript /scripts/main_driver.R {{ dag_run.conf["EXP_ID"] }}',
         docker_url='unix://var/run/docker.sock',
         network_mode='bridge'
     )

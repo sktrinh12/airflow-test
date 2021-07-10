@@ -52,14 +52,17 @@ x-airflow-common:
     AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
     AIRFLOW__CORE__ENABLE_XCOM_PICKLING: 'true'
   group_add:
-    - 998
+    - 1001
   volumes:
-    - /var/run/docker.sock:/var/run/docker.sock
-    - ./dags:/opt/airflow/dags
-    - ./logs:/opt/airflow/logs
-    - ./plugins:/opt/airflow/plugins
+    - /var/run/docker.sock:/var/run/docker.sock:z
+    - ./dags:/opt/airflow/dags:z
+    - /sashsrshiny/logs:/opt/airflow/logs:z
+    - ./plugins:/opt/airflow/plugins:z
     - ./airflow.cfg:/opt/airflow/airflow.cfg
   user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-50000}"
+  privileged: true
+  cap_add:
+    - ALL
   depends_on:
     redis:
       condition: service_healthy
@@ -74,7 +77,6 @@ services:
       POSTGRES_PASSWORD: airflow
       POSTGRES_DB: airflow
     volumes:
-      - /var/run/docker.sock:/var/run/docker.sock
       - postgres-db-volume:/var/lib/postgresql/data
     healthcheck:
       test: ["CMD", "pg_isready", "-U", "airflow"]
@@ -97,15 +99,13 @@ services:
     <<: *airflow-common
     command: webserver
     ports:
-      - 8080:8080
+      - 8000:8080
     healthcheck:
       test: ["CMD", "curl", "--fail", "http://localhost:8080/health"]
       interval: 10s
       timeout: 10s
       retries: 5
     restart: always
-    group_add:
-    - 998
 
   airflow-scheduler:
     <<: *airflow-common
@@ -116,8 +116,6 @@ services:
       timeout: 10s
       retries: 5
     restart: always
-    group_add:
-    - 998
 
   airflow-worker:
     <<: *airflow-common
@@ -130,8 +128,6 @@ services:
       timeout: 10s
       retries: 5
     restart: always
-    group_add:
-    - 998
 
   airflow-init:
     <<: *airflow-common

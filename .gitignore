@@ -1,0 +1,17 @@
+__pycache__/
+*.py[cod]
+*$py.class
+
+.Python
+build/
+lib/
+lib64/
+var/
+wheels/
+*.manifest
+*.spec
+*.log
+.env
+.venv
+env.bak/
+venv/bak/
