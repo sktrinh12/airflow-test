@@ -48,7 +48,7 @@ x-airflow-common:
     AIRFLOW__CELERY__BROKER_URL: redis://:@redis:6379/0
     AIRFLOW__CORE__FERNET_KEY: ''
     AIRFLOW__CORE__DAGS_ARE_PAUSED_AT_CREATION: 'true'
-    AIRFLOW__CORE__LOAD_EXAMPLES: 'true'
+    AIRFLOW__CORE__LOAD_EXAMPLES: 'false'
     AIRFLOW__API__AUTH_BACKEND: 'airflow.api.auth.backend.basic_auth'
     AIRFLOW__CORE__ENABLE_XCOM_PICKLING: 'true'
   group_add:
@@ -56,9 +56,10 @@ x-airflow-common:
   volumes:
     - /var/run/docker.sock:/var/run/docker.sock:z
     - ./dags:/opt/airflow/dags:z
-    - /sashsrshiny/logs:/opt/airflow/logs:z
+    - /datadump/logs:/opt/airflow/logs:z
     - ./plugins:/opt/airflow/plugins:z
     - ./airflow.cfg:/opt/airflow/airflow.cfg
+    - /datadump/data:/opt/airflow/datadump/data:z
   user: "${AIRFLOW_UID:-50000}:${AIRFLOW_GID:-50000}"
   privileged: true
   cap_add:

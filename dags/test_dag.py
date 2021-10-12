@@ -16,7 +16,7 @@ def first_fx_exec(**context):
     print("first_fx_exec     ")
     context['ti'].xcom_push(key='mykey', value="first_fx_exec says hello")
 
-
+# ti = task instance
 def second_fx_exec(**context):
     instance = context.get("ti").xcom_pull(key="mykey")
     data = [{"name":"Spencer","title":"Scientist"},

@@ -22,24 +22,6 @@ with DAG(
     default_args=default_args,
     catchup=False) as dag:
 
-    t_bash = BashOperator(
-        task_id="bash_output",
-        bash_command='echo "today is: $(date) - {{ dag_run.conf["EXP_ID"] }} - run_id={{ run_id }} - dag_run={{ dag_run }}"'
-    )
-
-    t_docker = DockerOperator(
-        task_id='omiq_pipeline',
-        image='bdb/omiq:latest',
-        api_version='auto',
-        auto_remove=True,
-        force_pull=False,
-	volumes = ['/datadump:/datadump:z', '/home/ca10322096/scripts:/scripts:z'],
-       # command='Rscript -e "print(list.files(file.path(\'/mnt/data/20211506TEST\')))"',
-	command='Rscript /scripts/main_driver.R {{ dag_run.conf["EXP_ID"] }} {{ dag_run.conf["RE_RUN"] }}',
-        docker_url='unix://var/run/docker.sock',
-        network_mode='bridge'
-    )
-
     t_regdocker = DockerOperator(
         task_id="regression",
         image='bdb/omiq:latest',
@@ -52,4 +34,4 @@ with DAG(
         network_mode='bridge'
     )
 
-    t_bash >> t_docker >> t_regdocker
+    t_regdocker
