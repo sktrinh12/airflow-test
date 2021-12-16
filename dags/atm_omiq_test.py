@@ -17,7 +17,7 @@ default_args = {
     }
 
 fp = "/opt/airflow/datadump/data/"
-exp_ids = [eid for eid in os.listdir(fp) if os.path.isdir(os.path.join(fp, eid)) and eid.endswith("LWB5")]
+exp_ids = [eid for eid in os.listdir(fp) if os.path.isdir(os.path.join(fp, eid)) and eid.startswith("20212210")]
 
 with DAG(dag_id=f"{os.path.splitext(os.path.basename(__file__))[0]}_atm_test",
     default_args=default_args,
